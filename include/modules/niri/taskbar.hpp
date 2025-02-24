@@ -24,7 +24,6 @@ class Taskbar : public AModule, public EventHandler {
 
  private:
 
-
   void onEvent(const Json::Value &ev) override;
   void doUpdate();
   Gtk::Button &addTask(const Json::Value &win);
@@ -46,6 +45,11 @@ class Task : public AAppIconLabel {
     auto doUpdate(const Json::Value &win, std::unordered_map<uint64_t, const Json::Value> my_workspaces, const Bar &bar_) -> void;
     auto update() -> void override;
     Gtk::EventBox &getEventBox();
+
+    uint64_t win_id_;
+
+  protected:
+    bool handleClick(GdkEventButton* const& e);
 };
 
 }  // namespace waybar::modules::niri

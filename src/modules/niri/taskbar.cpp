@@ -119,6 +119,11 @@ Task::Task(const Json::Value &win, const Json::Value &config):
   AAppIconLabel(config, "task", win["app_id"].asString(), config["format"].asString()) {
     event_box_.show_all();
     box_.set_name("task");
+
+    event_box_.signal_button_press_event().connect(sigc::mem_fun(*this, &Task::handleClick));
+
+    /* save id for click action */
+    win_id_ = win["id"].asUInt64();
 };
 
 
@@ -224,6 +229,26 @@ Gtk::EventBox &Task::getEventBox() {
 
 auto Task::update() -> void {
   AAppIconLabel::update();
+}
+
+bool Task::handleClick(GdkEventButton* const& e) {
+  /* if (config_["focus-on-click"].isBool() && config_["focus-on-click"].asBool()){ */
+    try {
+      // {"Action":{"FocusWindow":{"id":1}}}
+      Json::Value request(Json::objectValue);
+      auto& action = (request["Action"] = Json::Value(Json::objectValue));
+      auto& focusWindow = (action["FocusWindow"] = Json::Value(Json::objectValue));
+      focusWindow["id"] = win_id_;
+
+      IPC::send(request);
+
+      spdlog::debug("[Task] Clicked task id {}", win_id_);
+    } catch (const std::exception &e) {
+      spdlog::error("[Task] Error switching window: {}", e.what());
+    }
+  /* } */
+
+  return true;
 }
 
 }  // namespace waybar::modules::niri
