@@ -130,9 +130,15 @@ Task::Task(const Json::Value &win, const Json::Value &config):
 Task::~Task() = default;
 
 
-auto Task::doUpdate(const Json::Value &win, const std::unordered_map<uint64_t, const Json::Value> my_workspaces, const Bar &bar_) -> void {
+auto Task::doUpdate(const Json::Value &win, const std::unordered_map<uint64_t, const Json::Value> &my_workspaces, const Bar &bar_) -> void {
 
   /* visibility */
+  if (!win["workspace_id"].isUInt64()) {
+    /* currently not on any workspace (e.g. dragging) */
+    event_box_.hide();
+    return;
+  }
+
   const auto &ws = my_workspaces.find(win["workspace_id"].asUInt64())->second;
 
   if ((config_["all-outputs"].asBool() && config_["all-workspaces"].asBool()) ||

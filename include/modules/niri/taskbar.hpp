@@ -42,7 +42,7 @@ class Task : public AAppIconLabel {
   public:
     Task(const Json::Value &win, const Json::Value &config);
     ~Task() override;
-    auto doUpdate(const Json::Value &win, std::unordered_map<uint64_t, const Json::Value> my_workspaces, const Bar &bar_) -> void;
+    auto doUpdate(const Json::Value &win, const std::unordered_map<uint64_t, const Json::Value> &my_workspaces, const Bar &bar_) -> void;
     auto update() -> void override;
     Gtk::EventBox &getEventBox();
 
